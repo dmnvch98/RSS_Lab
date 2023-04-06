@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.rsslab.databinding.ActivityMainBinding
@@ -13,26 +15,34 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-    private val RSS_link = "https://people.onliner.by/feed"
+    private var RSS_DEFAULT_LINK = "https://people.onliner.by/feed"
+    private var RSS_link = "";
+
     private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-//        setContentView(R.layout.activity_main)
-//        toolbar.title = "NEWS by Onliner"
-
-        binding.toolbar.title = "NEWS by Onliner"
+        binding.toolbar.title = RSS_link
         setSupportActionBar(binding.toolbar)
-
-//        setSupportActionBar(toolbar)
-//        val linearLayoutManager = LinearLayoutManager(baseContext,
-//            LinearLayoutManager.VERTICAL, false)
-//        recyclerView.layoutManager = linearLayoutManager
-//        loadRSS()
         val linearLayoutManager = LinearLayoutManager(baseContext, LinearLayoutManager.VERTICAL, false)
         binding.recyclerView.layoutManager = linearLayoutManager
+        val saveButton = findViewById<Button>(R.id.saveButton)
+        val editText = findViewById<EditText>(R.id.editText)
+        RSS_link = RSS_DEFAULT_LINK;
+        saveButton.setOnClickListener {
+            RSS_link = editText.text.toString()
+            binding.toolbar.title = RSS_link;
+            loadRSS()
+        }
+        val clearButton = findViewById<Button>(R.id.clearButton)
+        clearButton.setOnClickListener {
+            editText.text.clear()
+            RSS_link = RSS_DEFAULT_LINK;
+            binding.toolbar.title = RSS_DEFAULT_LINK;
+            loadRSS()
+        }
         loadRSS()
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
